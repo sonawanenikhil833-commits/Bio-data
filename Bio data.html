@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="mr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>वैवाहिक बायोडाटा — निखिल सोनवणे</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CDN -->
+  <script>
+    tailwind = {
+      config: {
+        theme: {
+          extend: {
+            fontFamily: { 
+              inter: ['Inter', 'ui-sans-serif', 'system-ui'],
+              devanagari: ['"Noto Sans Devanagari"', 'Inter', 'system-ui']
+            },
+            colors: {
+              softblue: { 50: '#f5f8ff', 100: '#eaf1ff', 200: '#cfe0ff', 500: '#4b7cf0', 700: '#335fd1' },
+              whatsapp: '#25D366'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root { --card-bg: rgba(255,255,255,0.7); --glass: rgba(255,255,255,0.6); }
+    html,body { height:100%; }
+    body {
+      font-family: 'Noto Sans Devanagari', 'Inter', system-ui;
+      background: linear-gradient(180deg, #f6f9ff 0%, #eef3fb 100%);
+      color: #0f172a;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .float-slow { animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0); } }
+
+    .img-hover {
+      transition: transform .45s cubic-bezier(.2,.9,.3,1), box-shadow .3s ease;
+      border-radius: .75rem;
+    }
+    .img-hover:hover {
+      transform: scale(1.03);
+      box-shadow: 0 12px 30px rgba(36,55,120,0.12);
+    }
+
+    .glass {
+      background: var(--glass);
+      backdrop-filter: blur(6px) saturate(120%);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .focus-ring:focus { outline: 3px solid rgba(59,130,246,0.25); outline-offset: 3px; }
+
+    .modal-backdrop {
+      background: linear-gradient(90deg, rgba(2,6,23,0.45), rgba(15,23,42,0.55));
+      backdrop-filter: blur(2px);
+    }
+
+    .modal { display: none; }
+    .modal.active { display: flex; }
+
+    @media (max-width: 520px) {
+      .hero-actions { gap: .5rem; }
+    }
+
+    /* PDF Button (पहिल्यासारखाच) */
+    .pdf-btn {
+      background: rgba(255,255,255,0.8);
+      color: #1e40af;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      border-radius: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(59,130,246,0.15);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(59,130,246,0.2);
+    }
+    .pdf-btn:hover {
+      background: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59,130,246,0.25);
+    }
+
+    /* WhatsApp Button */
+    .whatsapp-btn {
+      background: #25D366;
+      color: white;
+      font-weight: 600;
+      padding: 0.75rem 1.25rem;
+      border-radius: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+      transition: all 0.3s ease;
+    }
+    .whatsapp-btn:hover {
+      background: #128C7E;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(37,211,102,0.4);
+    }
+
+    /* Mobile Fix for Gallery */
+    @media (max-width: 640px) {
+      .gallery-grid { grid-template-columns: 1fr 1fr !important; gap: 0.75rem; }
+      .gallery-grid img { height: 90px !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <main class="max-w-5xl mx-auto p-6 lg:p-10">
+
+    <!-- Header -->
+    <header class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center mb-8">
+      <div class="md:col-span-1 flex items-center justify-center">
+        <div class="w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden shadow-lg glass p-1">
+          <img id="profilePhoto" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop" alt="प्रोफाईल फोटो"
+               class="w-full h-full object-cover object-center float-slow" />
+        </div>
+      </div>
+
+      <div class="md:col-span-2 flex flex-col gap-3">
+        <div class="flex items-start justify-between">
+          <div>
+            <h1 id="fullName" class="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight">निखिल सोनवणे</h1>
+            <p id="tagline" class="mt-1 text-gray-700 text-sm sm:text-base max-w-xl">Civil Engineer • प्रवास, कुटुंब आणि चहा प्रेमी</p>
+          </div>
+        </div>
+
+        <div class="mt-3 flex flex-wrap gap-2 items-center hero-actions">
+          <span class="px-3 py-1 rounded-full text-sm bg-white shadow glass">वय: <strong>२५</strong></span>
+          <span class="px-3 py-1 rounded-full text-sm bg-white shadow glass">जळगाव</span>
+          <span class="px-3 py-1 rounded-full text-sm bg-white shadow glass">Civil Engineer</span>
+          <a href="#gallery" class="px-3 py-1 rounded-full text-sm bg-white shadow glass hover:underline">फोटो</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+      <!-- Left Column -->
+      <section class="lg:col-span-2 space-y-6">
+
+        <!-- About Me -->
+        <!-- <article class="glass p-6 rounded-2xl shadow">
+          <div class="flex items-start justify-between">
+            <h2 class="text-xl font-semibold">माझ्याबद्दल</h2>
+            <div class="flex items-center gap-2">
+              <button id="ttsPlay" title="ऐका" class="focus-ring inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/80 hover:bg-white text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h2v16H6zM10 4h2v16h-2zM14 5.99h2v12.02h-2z"/></svg>
+                ऐका
+              </button>
+              <button id="ttsStop" title="थांबा" class="focus-ring inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-white/80 hover:bg-white text-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+                थांबा
+              </button>
+            </div>
+          </div>
+          <p id="aboutText" class="mt-4 text-gray-700 leading-relaxed">
+            मी उबदार, कुटुंबप्रिय आणि स्वच्छ कोडने वास्तविक समस्या सोडवण्यात उत्साही आहे. मला प्रवास, नवीन लोकांना भेटणे आणि चहा पिणे आवडते. प्रामाणिकपणा, दयाळूपणा आणि चांगला विनोद यांना मी महत्त्व देतो — आणि आदर व साथीवर आधारित जीवन घडवण्याची अपेक्षा आहे.
+          </p>
+        </article> -->
+
+        <!-- My Interests (New Section) -->
+        <!-- <article class="glass p-6 rounded-2xl shadow">
+          <h2 class="text-xl font-semibold">माझी आवड</h2>
+          <p class="mt-3 text-gray-700 leading-relaxed">
+            मला प्रवास करणे, नवीन संस्कृती जाणून घेणे आणि स्थानिक पदार्थांचा आस्वाद घेणे आवडते. चहाच्या कपासोबत पुस्तके वाचणे आणि कुटुंबासोबत वेळ घालवणे माझ्या आवडीचा भाग आहे. मी नेहमी नवीन कौशल्ये शिकण्यासाठी आणि वैयक्तिक वाढीसाठी उत्सुक असतो.
+          </p>
+        </article> -->
+
+        <!-- Education & Career -->
+        <article class="glass p-6 rounded-2xl shadow grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h3 class="text-lg font-semibold">शिक्षण</h3>
+            <ul class="mt-3 space-y-2 text-gray-700">
+              <li><strong>Civil Engineering (Diploma)</strong>, NMKC महाविद्यालय, जळगाव — २०२२</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold">करिअर</h3>
+            <ul class="mt-3 space-y-2 text-gray-700">
+              <li>पद: <strong>Site Engineer (S.E.)</strong></li>
+              <li>कंपनी: <strong>Spectrum PVT Ltd</strong></li>
+              <li>ZP लायसन्स: <strong>धारक (क्षमता: ५० लाख)</strong></li>
+            </ul>
+          </div>
+        </article>
+
+        <!-- Gallery (Fixed for Mobile) -->
+        <article id="gallery" class="glass p-6 rounded-2xl shadow">
+          <h2 class="text-xl font-semibold">फोटो गॅलरी</h2>
+          <p class="mt-2 text-sm text-gray-600">क्लिक करून मोठे फोटो पहा.</p>
+          <div class="gallery-grid mt-4 grid grid-cols-2 gap-4">
+            <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?q=80&w=800&auto=format&fit=crop" alt="गॅलरी १" class="img-hover w-full h-40 object-cover rounded-xl cursor-pointer" data-full="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?q=80&w=1400" />
+            <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=800&auto=format&fit=crop" alt="गॅलरी २" class="img-hover w-full h-40 object-cover rounded-xl cursor-pointer" data-full="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1400" />
+            <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800&auto=format&fit=crop" alt="गॅलरी ३" class="img-hover w-full h-40 object-cover rounded-xl cursor-pointer" data-full="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1400" />
+            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=800&auto=format&fit=crop" alt="गॅलरी ४" class="img-hover w-full h-40 object-cover rounded-xl cursor-pointer" data-full="https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1400" />
+          </div>
+        </article>
+      </section>
+
+      <!-- Right Column -->
+      <aside class="space-y-6">
+
+        <!-- Personal Info -->
+        <section class="glass p-5 rounded-2xl shadow">
+          <h3 class="text-lg font-semibold">वैयक्तिक माहिती</h3>
+          <dl class="mt-3 text-gray-700 space-y-2 text-sm">
+            <div class="flex justify-between"><dt>नाव</dt><dd>निखिल सोनवणे</dd></div>
+            <div class="flex justify-between"><dt>लिंग</dt><dd>पुरुष</dd></div>
+            <div class="flex justify-between"><dt>जन्मतारीख</dt><dd>१८ फेब्रुवारी २०००</dd></div>
+            <div class="flex justify-between"><dt>जन्मस्थान</dt><dd>जळगाव</dd></div>
+            <div class="flex justify-between"><dt>उंची</dt><dd>५'५" (१७५ सें.मी.)</dd></div>
+            <div class="flex justify-between"><dt>वैवाहिक स्थिती</dt><dd>अविवाहित</dd></div>
+            <div class="flex justify-between"><dt>धर्म</dt><dd>बौद्ध</dd></div>
+            <div class="flex justify-between"><dt>मातृभाषा</dt><dd>मराठी</dd></div>
+            <div class="flex justify-between"><dt>जात</dt><dd>एस.सी.</dd></div>
+          </dl>
+        </section>
+
+        <!-- Family -->
+        <section class="glass p-5 rounded-2xl shadow">
+          <h3 class="text-lg font-semibold">कुटुंब</h3>
+          <div class="mt-3 text-gray-700 space-y-2 text-sm">
+            <p><strong>वडील:</strong> नितीन किसन सोनवणे — लेबर कंत्राटदार</p>
+            <p><strong>आई:</strong> छाया सोनवणे — गृहिणी</p>
+            <p><strong>भाऊ:</strong> राहुल सोनवणे (अविवाहित)</p>
+          </div>
+        </section>
+
+        <!-- Contact + Buttons -->
+        <section class="glass p-5 rounded-2xl shadow">
+          <h3 class="text-lg font-semibold">संपर्क</h3>
+          <div class="mt-3 text-gray-700 space-y-3 text-sm">
+            <p><strong>मोबाईल:</strong> <a href="tel:9518733474" class="text-softblue-700 hover:underline">९५१८७३३४७४</a></p>
+            <p><strong>वडिलांचा नंबर:</strong> <a href="tel:9021951766" class="text-softblue-700 hover:underline">९०२१९५१७६६</a></p>
+            <p class="text-xs leading-relaxed">
+              <strong>पत्ता:</strong> समता नगर, आंबेडकर पुतळा परिसर, महाबळ रोड, जळगाव, ४२५००१
+            </p>
+
+            <!-- PDF Download (पहिल्यासारखाच) -->
+            <div class="mt-5">
+              <a href="./biodata.pdf" download class="pdf-btn w-full justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                बायोडाटा PDF डाउनलोड करा
+              </a>
+            </div>
+
+            <!-- WhatsApp Chat Button -->
+            <div class="mt-3">
+              <a href="https://wa.me/919518733474?text=नमस्कार%20निखिल,%20मी%20तुमच्या%20बायोडाटाबद्दल%20बोलतेय..." 
+                 target="_blank" class="whatsapp-btn w-full justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.297-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.262c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488z"/>
+                </svg>
+                WhatsApp वर बोलूया
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- NEW: कौटुंबिक संदर्भ (Reference Person) -->
+        <!-- <section class="glass p-5 rounded-2xl shadow">
+          <h3 class="text-lg font-semibold">कौटुंबिक संदर्भ</h3>
+          <div class="mt-3 space-y-3 text-gray-700 text-sm">
+            <p>
+              <strong>संदर्भ व्यक्ती:</strong> श्री. संजय पाटील  
+              <br><span class="text-xs">नातं: काका (वडिलांचे भाऊ)</span>
+            </p>
+            <p>
+              <strong>पद:</strong> प्राथमिक शिक्षक, जिल्हा परिषद शाळा, जळगाव  
+              <br><strong>मोबाईल:</strong> <a href="tel:9876543210" class="text-softblue-700 hover:underline">९८७६५४३२१०</a>
+            </p>
+            <p class="text-xs leading-relaxed">
+              कुटुंबातील विश्वासू व्यक्ती. तुम्ही त्यांच्याशी थेट बोलू शकता. ते माझ्या स्वभाव, कुटुंब आणि पार्श्वभूमीबद्दल सविस्तर सांगतील.
+            </p>
+          </div>
+          <p class="mt-3 text-xs text-gray-600 italic">
+            पारदर्शकता आणि विश्वास — आमच्या कुटुंबाचा मूलमंत्र.
+          </p>
+        </section> -->
+      </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-10 text-center text-sm text-gray-600">
+      <p>तयार केले • <a href="biodata.pdf" download class="underline text-softblue-700">PDF डाउनलोड</a> • <button onclick="showLogin()" class="underline">प्रशासक लॉगिन</button></p>
+    </footer>
+
+    <!-- Admin Panel -->
+    <section id="adminPanel" class="hidden max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow mt-6">
+      <h2 class="text-2xl font-bold mb-4">संपर्क संदेश</h2>
+      <table class="w-full border-collapse border">
+        <thead><tr class="bg-gray-100"><th class="border p-2">नाव</th><th class="border p-2">ईमेल</th><th class="border p-2">संदेश</th><th class="border p-2">कृती</th></tr></thead>
+        <tbody id="messageTable"></tbody>
+      </table>
+      <button onclick="clearAll()" class="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">सर्व हटवा</button>
+    </section>
+  </main>
+
+  <!-- Contact Modal -->
+  <div id="modalRoot" class="modal fixed inset-0 z-50 items-center justify-center hidden">
+    <div id="modalBackdrop" class="modal-backdrop absolute inset-0"></div>
+    <div class="relative bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-xl">
+      <div class="flex items-center gap-4 mb-4">
+        <img id="modalProfile" src="" alt="" class="w-16 h-16 rounded-full object-cover" />
+        <h3 id="sideName" class="text-lg font-bold"></h3>
+      </div>
+      <form id="contactForm" class="space-y-3">
+        <input name="name" placeholder="तुमचे नाव" required class="w-full p-3 border rounded-lg focus-ring" />
+        <input name="email" type="email" placeholder="ईमेल" required class="w-full p-3 border rounded-lg focus-ring" />
+        <textarea name="message" rows="3" placeholder="संदेश" required class="w-full p-3 border rounded-lg focus-ring"></textarea>
+        <div class="flex gap-2">
+          <button type="submit" class="flex-1 bg-softblue-500 text-white py-2 rounded-lg">पाठवा</button>
+          <button type="button" id="contactCancel" class="flex-1 bg-gray-200 py-2 rounded-lg">रद्द</button>
+        </div>
+      </form>
+      <div id="contactConfirmation" class="hidden text-center py-4">
+        <p class="text-green-600 font-semibold">संदेश पाठवला!</p>
+      </div>
+      <button id="closeModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Lightbox (Fixed) -->
+  <div id="imageLightbox" class="modal fixed inset-0 z-50 items-center justify-center hidden">
+    <div id="lightboxBackdrop" class="modal-backdrop absolute inset-0"></div>
+    <div class="relative max-w-4xl w-full p-4">
+      <img id="lightboxImg" src="" alt="" class="max-w-full max-h-full rounded-xl mx-auto" />
+      <button id="lightboxClose" class="absolute top-4 right-4 bg-white p-2 rounded-full shadow-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Full JS -->
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const modalRoot = $('#modalRoot'), modalBackdrop = $('#modalBackdrop');
+    const openContactBtn = $('#openContactBtn'), openContactBtnMobile = $('#openContactBtnMobile');
+    const closeModal = $('#closeModal'), contactCancel = $('#contactCancel');
+    const contactForm = $('#contactForm'), contactConfirmation = $('#contactConfirmation');
+    const modalProfile = $('#modalProfile'), sideName = $('#sideName');
+
+    function openModal() {
+      contactForm.classList.remove('hidden'); contactConfirmation.classList.add('hidden');
+      contactForm.reset(); modalRoot.classList.remove('hidden'); modalRoot.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      modalProfile.src = $('#profilePhoto').src;
+      sideName.textContent = $('#fullName').textContent;
+    }
+    function closeModalFn() { modalRoot.classList.add('hidden'); modalRoot.classList.remove('active'); document.body.style.overflow = ''; }
+
+    // Contact Buttons (Add if missing)
+    if (!openContactBtn) {
+      const btn = document.createElement('button');
+      // btn.id = 'openContactBtn'; btn.textContent = 'संपर्क साधा';
+      btn.className = 'focus-ring inline-flex items-center gap-2 px-4 py-2 rounded-full bg-softblue-500 text-white font-semibold shadow hover:shadow-md';
+      document.querySelector('header .flex.items-start').appendChild(btn);
+      btn.addEventListener('click', openModal);
+    }
+
+    openContactBtn?.addEventListener('click', openModal);
+    openContactBtnMobile?.addEventListener('click', openModal);
+    closeModal?.addEventListener('click', closeModalFn);
+    contactCancel?.addEventListener('click', closeModalFn);
+    modalBackdrop?.addEventListener('click', closeModalFn);
+
+    contactForm?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = { name: contactForm.name.value, email: contactForm.email.value, message: contactForm.message.value, timestamp: new Date().toISOString() };
+      const msgs = JSON.parse(localStorage.getItem('messages') || '[]');
+      msgs.push(data); localStorage.setItem('messages', JSON.stringify(msgs));
+      contactForm.classList.add('hidden'); contactConfirmation.classList.remove('hidden');
+    });
+
+    function showLogin() {
+      if (prompt('पासवर्ड:') === 'admin123') {
+        $('#adminPanel').classList.remove('hidden'); loadMessages();
+      } else alert('चुकीचा पासवर्ड');
+    }
+    function loadMessages() {
+      const msgs = JSON.parse(localStorage.getItem('messages') || '[]');
+      const table = $('#messageTable'); table.innerHTML = '';
+      msgs.forEach((m, i) => { table.innerHTML += `<tr><td class="border p-2">${m.name}</td><td class="border p-2">${m.email}</td><td class="border p-2">${m.message}</td><td class="border p-2"><button onclick="deleteMessage(${i})" class="px-2 py-1 bg-red-500 text-white rounded">हटवा</button></td></tr>`; });
+    }
+    window.deleteMessage = (i) => { let m = JSON.parse(localStorage.getItem('messages')); m.splice(i,1); localStorage.setItem('messages', JSON.stringify(m)); loadMessages(); };
+    window.clearAll = () => { if(confirm('सर्व हटवायचे?')) { localStorage.removeItem('messages'); loadMessages(); } };
+
+    $('#ttsPlay')?.addEventListener('click', () => { 
+      const utter = new SpeechSynthesisUtterance($('#aboutText').innerText); 
+      const v = speechSynthesis.getVoices().find(v=>v.lang.includes('mr')||v.lang.includes('hi')); 
+      if(v) utter.voice = v; speechSynthesis.speak(utter); 
+    });
+    $('#ttsStop')?.addEventListener('click', () => speechSynthesis.cancel());
+
+    // Lightbox (Fixed)
+    document.querySelectorAll('#gallery img').forEach(img => {
+      img.addEventListener('click', () => {
+        $('#lightboxImg').src = img.dataset.full || img.src;
+        $('#imageLightbox').classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    const closeLightbox = () => {
+      $('#imageLightbox').classList.remove('active');
+      $('#lightboxImg').src = '';
+      document.body.style.overflow = '';
+    };
+    $('#lightboxClose')?.addEventListener('click', closeLightbox);
+    $('#lightboxBackdrop')?.addEventListener('click', closeLightbox);
+  </script>
+</body>
+</html>
